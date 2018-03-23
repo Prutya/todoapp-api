@@ -15,7 +15,7 @@ module Api
       end
 
       def update
-        @todo.completed_at = params_update[:completed] ? Time.now : nil
+        @todo.completed_at = @todo.completed_at ? nil : Time.now
         @todo.save!
       end
 
@@ -26,7 +26,16 @@ module Api
       private
 
       def fetch_resources!
-        @todos = Todo.page(page).per(per_page)
+        scope = case params[:filter]
+        when 'active'
+          :active
+        when 'completed'
+          :completed
+        else
+          :all
+        end
+
+        @todos = Todo.send(scope).page(page).per(per_page)
       end
 
       def fetch_resource!
@@ -35,10 +44,6 @@ module Api
 
       def params_create
         params.require(:todo).permit(:title)
-      end
-
-      def params_update
-        params.require(:todo).permit(:completed)
       end
     end
   end
