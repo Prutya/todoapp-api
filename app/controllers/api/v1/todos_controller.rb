@@ -3,15 +3,15 @@
 module Api
   module V1
     class TodosController < ApplicationController
-      before_action :fetch_resources!, only: %i[index]
-      before_action :fetch_resource!,  only: %i[update destroy]
+      before_action :fetch_parent_resource!, only: %i[index create]
+      before_action :fetch_resources!,       only: %i[index]
+      before_action :fetch_resource!,        only: %i[update destroy]
 
       def index
       end
 
       def create
-        @todo = Todo.new(params_create)
-        @todo.save!
+        @todo = @todos_group.todos.create!(params_create)
       end
 
       def update
@@ -35,7 +35,14 @@ module Api
           :all
         end
 
-        @todos = Todo.send(scope).page(page).per(per_page)
+        @todos = @todo_group.todos
+          .send(scope)
+          .order(created_at: :desc)
+          .page(page).per(per_page)
+      end
+
+      def fetch_parent_resource!
+        @todo_group = TodoGroup.find(params[:todo_group_id]&.to_i)
       end
 
       def fetch_resource!
