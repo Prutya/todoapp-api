@@ -1,10 +1,11 @@
 json.todos @todos do |todo|
-  json.id         todo.id
-  json.title      todo.title
-  json.completed  todo.completed_at.present?
-  json.created_at todo.created_at&.iso8601
+  json.id          todo.id
+  json.todoGroupId todo.todo_group_id
+  json.title       todo.title
+  json.completed   todo.completed_at.present?
+  json.createdAt   todo.created_at&.iso8601
 end
 
-json.current_page @todos.current_page
-json.total_pages  @todos.total_pages
-json.per_page     @todos.limit_value
+json.currentPage @todos.current_page
+json.totalPages  @todos.total_pages
+json.perPage     @todos.limit_value
