@@ -5,3 +5,13 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+unless TodoGroup.any?
+  10.times do |i|
+    tg = TodoGroup.create!(title: "Group #{i + 1}")
+
+    rand(10).times do |j|
+      tg.todos.create!(title: "Todo #{i + 1}.#{j + 1}")
+    end
+  end
+end
