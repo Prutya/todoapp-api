@@ -11,7 +11,7 @@ module Api
       end
 
       def create
-        @todo = @todos_group.todos.create!(params_create)
+        @todo = @todo_group.todos.create!(params_create)
       end
 
       def update
