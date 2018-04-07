@@ -10,6 +10,7 @@ end
 gem 'bcrypt',    '~> 3.1.11'
 gem 'jbuilder',  '~> 2.7.0'
 gem 'kaminari',  '~> 1.1.1'
+gem 'knock',     '~> 2.1.1'
 gem 'pg',        '>= 0.18', '< 2.0'
 gem 'puma',      '~> 3.7'
 gem 'rack-cors', '~> 1.0.2'
