@@ -11,7 +11,7 @@ module Api
       private
 
       def fetch_resources!
-        @todo_groups = TodoGroup
+        @todo_groups = current_user.todo_groups
           .order(created_at: :desc)
           .page(page).per(per_page)
       end
