@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
+
   namespace :api do
     namespace :v1 do
+      post 'user_token' => 'user_token#create'
+
+      resources :users, only: %i[show]
+
       resources :todo_groups, only: %i[index] do
         resources :todos, only: %i[index create update destroy], shallow: true
       end
