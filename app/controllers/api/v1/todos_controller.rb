@@ -3,9 +3,9 @@
 module Api
   module V1
     class TodosController < ApplicationController
-      before_action :fetch_parent_resource!, only: %i[index create destroy]
+      before_action :fetch_parent_resource!, only: %i[index create]
       before_action :fetch_resources!,       only: %i[index]
-      before_action :fetch_resource!,        only: %i[destroy]
+      before_action :fetch_resource!,        only: %i[destroy update]
 
       def index
       end
@@ -15,10 +15,6 @@ module Api
       end
 
       def update
-        @todo = Todo.joins(:todo_group)
-          .where('todo_groups.user_id = ?', current_user.id)
-          .find(params[:id]&.to_i)
-
         @todo.completed_at = @todo.completed_at ? nil : Time.now
         @todo.save!
       end
@@ -28,6 +24,12 @@ module Api
       end
 
       private
+
+      def fetch_resource!
+        @todo = Todo.joins(:todo_group)
+          .where('todo_groups.user_id = ?', current_user.id)
+          .find(params[:id]&.to_i)
+      end
 
       def fetch_resources!
         scope = case params[:filter]
@@ -47,10 +49,6 @@ module Api
 
       def fetch_parent_resource!
         @todo_group = current_user.todo_groups.find(params[:todo_group_id]&.to_i)
-      end
-
-      def fetch_resource!
-        @todo = @todo_group.find(params[:id]&.to_i)
       end
 
       def params_create
