@@ -8,12 +8,20 @@ module Api
       def index
       end
 
+      def create
+        @todo_group = current_user.todo_groups.create!(params_create)
+      end
+
       private
 
       def fetch_resources!
         @todo_groups = current_user.todo_groups
           .order(created_at: :desc)
           .page(page).per(per_page)
+      end
+
+      def params_create
+        params.require(:todoGroup).permit(:title)
       end
     end
   end
