@@ -5,9 +5,12 @@ module Api
     class TodosController < ApplicationController
       before_action :fetch_parent_resource!, only: %i[index create]
       before_action :fetch_resources!,       only: %i[index]
-      before_action :fetch_resource!,        only: %i[destroy update]
+      before_action :fetch_resource!,        only: %i[destroy update show]
 
       def index
+      end
+
+      def show
       end
 
       def create
@@ -15,8 +18,7 @@ module Api
       end
 
       def update
-        @todo.completed_at = @todo.completed_at ? nil : Time.now
-        @todo.save!
+        @todo.update_attributes!(params_update)
       end
 
       def destroy
@@ -32,17 +34,8 @@ module Api
       end
 
       def fetch_resources!
-        scope = case params[:filter]
-        when 'active'
-          :active
-        when 'completed'
-          :completed
-        else
-          :all
-        end
-
         @todos = @todo_group.todos
-          .send(scope)
+          .send(scope_filter)
           .order(created_at: :desc)
           .page(page).per(per_page)
       end
@@ -51,8 +44,28 @@ module Api
         @todo_group = current_user.todo_groups.find(params[:todo_group_id]&.to_i)
       end
 
+      def scope_filter
+        case params[:filter]
+        when 'active'
+          :active
+        when 'completed'
+          :completed
+        else
+          :all
+        end
+      end
+
       def params_create
         params.require(:todo).permit(:title)
+      end
+
+      def params_update
+        new_params = params.require(:todo).permit(:title, :completed).to_h
+
+        return new_params if new_params[:completed].nil?
+
+        new_params[:completed_at] = new_params[:completed] ? Time.now : nil
+        new_params.reject { |key, _| key == 'completed' }
       end
     end
   end
